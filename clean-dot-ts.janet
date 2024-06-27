@@ -3,9 +3,9 @@
 
 (defn main
   [& argv]
-  (def shared-lib-path 
-    (string c/ts-lib-dir "/" "janet_simple.so"))
-  (when (os/stat shared-lib-path)
-    (os/rm shared-lib-path))
+  (each so (os/dir c/ts-lib-dir)
+    (def fuller-path (string c/ts-lib-dir "/" so))
+    (when (os/stat fuller-path)
+      (os/rm fuller-path)))
   #
   true)
