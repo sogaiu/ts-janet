@@ -5,6 +5,11 @@
 (def grammar-url
   "https://github.com/sogaiu/tree-sitter-janet-simple")
 
+# XXX: if more than one grammar repository has been cloned
+#      which one the tree-sitter cli decides to use is
+#      unclear.  to have a grammar not be detected, move
+#      it somewhere else or rename its dir to not start with
+#      "tree-sitter-"
 '(def grammar-url
   "https://github.com/GrayJack/tree-sitter-janet")
 
