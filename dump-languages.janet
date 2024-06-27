@@ -3,8 +3,7 @@
 
 (defn main
   [& argv]
-  (when (not (ets/main))
-    (eprintf "ensure-tree-sitter task failed")
+  (when (not (u/do-deps ets/main))
     (break false))
   #
   (when (not (u/ts-command ["dump-languages"]))

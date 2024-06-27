@@ -1,5 +1,23 @@
 (import ./_conf :as c)
 
+########################################################################
+
+(defn do-deps
+  [& deps]
+  (var all-passed true)
+  (each dep-fn deps
+    (def [success? result] (protect (dep-fn)))
+    (when (or (not success?)
+              (not result))
+      # XXX: don't know a good way to get the name
+      #(eprintf "%n task failed" dep-fn)
+      (set all-passed false)
+      (break)))
+  #
+  all-passed)
+
+########################################################################
+
 (defn bin-exists?
   [name]
   (with [of (file/temp)]

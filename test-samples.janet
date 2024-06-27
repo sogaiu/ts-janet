@@ -1,7 +1,6 @@
 (import ./_conf :as c)
 (import ./_util :as u)
 (import ./gen-parser-c :as gpc)
-(import ./ensure-grammar :as eg)
 
 ########################################################################
 
@@ -61,12 +60,7 @@
 
 (defn main
   [& args]
-  (when (not (gpc/main))
-    (eprintf "gen-parser-c task failed")
-    (break false))
-
-  (when (not (eg/main))
-    (eprintf "ensure-grammar task failed")
+  (when (not (u/do-deps gpc/main))
     (break false))
 
   (def repos-path (string c/proj-dir "/repos"))

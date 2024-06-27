@@ -17,8 +17,7 @@
   [& argv]
   (make-tree-sitter-config)
   (when (not (os/stat c/ts-bin-path))
-    (when (not (erb/main))
-      (eprintf "ensure-rust-bits task failed")
+    (when (not (u/do-deps erb/main))
       (break false))
     #
     (def dir (os/cwd))

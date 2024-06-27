@@ -6,25 +6,17 @@
 
 (defn main
   [& argv]
-  (when (not (ets/main))
-    (eprintf "ensure-tree-sitter task failed")
-    (break false))
-  #
-  (when (not (c/main))
-    (eprintf "clean task failed")
-    (break false))
-  #
-  (when (not (eg/main))
-    (eprintf "ensure-grammar task failed")
+  (when (not (u/do-deps ets/main c/main eg/main))
     (break false))
   #
   (def dir (os/cwd))
   (defer (os/cd dir)
     (os/cd c/grammar-path)
-    (when (not (u/ts-command ["generate"
-                              "--abi" c/ts-abi
-                              "--no-bindings"]))
-      (eprintf "tree-sitter generate subcommand failed")
-      (break false)))
-  #
-  true)
+    (if (u/ts-command ["generate"
+                       "--abi" c/ts-abi
+                       "--no-bindings"])
+      true
+      (do
+        (eprintf "tree-sitter generate subcommand failed")
+        false))))
+

@@ -4,8 +4,7 @@
 
 (defn main
   [& argv]
-  (when (not (gpc/main))
-    (eprintf "gen-parser-c task failed")
+  (when (not (u/do-deps gpc/main))
     (break false))
   #
   (def subcommand-args (drop 1 argv))
