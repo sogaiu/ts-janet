@@ -2,7 +2,11 @@
 
 ########################################################################
 
-(def grammar-url "https://github.com/sogaiu/tree-sitter-janet-simple")
+(def grammar-url
+  "https://github.com/sogaiu/tree-sitter-janet-simple")
+
+'(def grammar-url
+  "https://github.com/GrayJack/tree-sitter-janet")
 
 (def grammar-ref "master")
 
