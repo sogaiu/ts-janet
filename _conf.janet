@@ -6,8 +6,15 @@
 
 (def grammar-ref "master")
 
+# from portion of url after last slash
+(def grammar-dir
+  (string/slice grammar-url
+                (-> (string/find-all "/" grammar-url)
+                    last
+                    inc)))
+
 (def grammar-path
-  (string proj-dir "/" "tree-sitter-janet-simple"))
+  (string proj-dir "/" grammar-dir))
 
 ########################################################################
 
