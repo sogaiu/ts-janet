@@ -576,18 +576,16 @@
   (defer (os/cd old-dir)
     (os/cd repos-path)
     #
-    (def dest-dir
-      (uri-to-dir-path url))
+    (def dest-dir (uri-to-dir-path url))
     (assert dest-dir
-      (string/format "failed to parse url: %n" url))
+            (string/format "failed to parse url: %n" url))
     # skip if dest-dir already exists
     (when (not (os/stat dest-dir))
       (mkdir-p dest-dir)
       (assert (os/stat dest-dir)
               (string/format "failed to create dir: %s" dest-dir))
       # need exit code so not using `run` from util.janet
-      (os/execute ["git"
-                   "clone" "--depth=1"
+      (os/execute ["git" "clone" "--depth=1"
                    url dest-dir]
                   :p))))
 
