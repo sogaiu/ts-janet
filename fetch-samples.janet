@@ -694,5 +694,7 @@
     (printf "Successfully fetched repos: %d" (length (get results 0)))
     (each ret (sort (keys results))
       (when (not (zero? ret))
-        (eprintf "Error code %d: %d" ret (length (get results ret)))))))
+        (eprintf "Error code %d: %d" ret (length (get results ret))))))
+  #
+  true)
 
