@@ -573,6 +573,8 @@
   (def old-dir (os/cwd))
   #
   (os/mkdir repos-path)
+  (assert (os/stat repos-path)
+          (string/format "failed to create dir: %s" repos-path))
   (defer (os/cd old-dir)
     (os/cd repos-path)
     #
