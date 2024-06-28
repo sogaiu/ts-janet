@@ -1,4 +1,5 @@
-(import ./_conf :as c)
+# XXX: partially arranged for via other means
+#(import ./_conf :as c)
 
 ########################################################################
 
@@ -665,6 +666,16 @@
 
   )
 
+(defn find-repos-path
+  []
+  (if-not (os/stat "_conf.janet")
+    (string (os/cwd) "/" "repos")
+    (let [[success? env-tbl] (protect (dofile "_conf.janet"))]
+      (when (not success?)
+        (eprintf "failed to evaluate _conf.janet")
+        (break false))
+      (get-in env-tbl ['repos-path :value]))))
+
 ########################################################################
 
 (defn main
@@ -674,6 +685,8 @@
       (scan-number (get args 1))
       10))
   #
+  (def c/repos-path (find-repos-path))
+  (assert c/repos-path "failed to determine c/repos-path")
   (os/mkdir c/repos-path)
   (when (not (= :directory (os/stat c/repos-path :mode)))
     (eprintf "repos root needs to be a directory: %s" c/repos-path)
