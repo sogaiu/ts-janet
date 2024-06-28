@@ -2,6 +2,11 @@
 
 ########################################################################
 
+(def repos-path
+  (string proj-dir "/" "repos"))
+
+########################################################################
+
 (def grammar-url
   "https://github.com/sogaiu/tree-sitter-janet-simple")
 

@@ -63,14 +63,13 @@
   (when (not (u/do-deps gpc/main))
     (break false))
 
-  (def repos-path (string c/proj-dir "/repos"))
-  (when (not (u/is-dir? repos-path))
-    (eprintf "expected a directory for: %s" repos-path)
+  (when (not (u/is-dir? c/repos-path))
+    (eprintf "expected a directory for: %s" c/repos-path)
     (break false))
 
   # find all .janet files
   (def src-paths @[])
-  (u/just-files repos-path
+  (u/just-files c/repos-path
                 src-paths
                 |(string/has-suffix? ".janet" $))
 
