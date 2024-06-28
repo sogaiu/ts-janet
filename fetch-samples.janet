@@ -666,15 +666,16 @@
 
   )
 
-(defn find-repos-path
+(defn find-repos-name
   []
-  (if-not (os/stat "_conf.janet")
-    (string (os/cwd) "/" "repos")
-    (let [[success? env-tbl] (protect (dofile "_conf.janet"))]
-      (when (not success?)
-        (eprintf "failed to evaluate _conf.janet")
-        (break false))
-      (get-in env-tbl ['repos-path :value]))))
+  (when (not (os/stat "_conf.janet"))
+    (break "repos"))
+  #
+  (def [success? env-tbl] (protect (dofile "_conf.janet")))
+  (when (not success?)
+    (eprintf "failed to evaluate _conf.janet")
+    (break))
+  (get-in env-tbl ['repos-name :value]))
 
 ########################################################################
 
@@ -685,17 +686,17 @@
       (scan-number (get args 1))
       10))
   #
-  (def c/repos-path (find-repos-path))
-  (assert c/repos-path "failed to determine c/repos-path")
-  (os/mkdir c/repos-path)
-  (when (not (= :directory (os/stat c/repos-path :mode)))
-    (eprintf "repos root needs to be a directory: %s" c/repos-path)
+  (def repos-name (find-repos-name))
+  (assert repos-name "failed to determine repos-name")
+  (os/mkdir repos-name)
+  (when (not (= :directory (os/stat repos-name :mode)))
+    (eprintf "repos root needs to be a directory: %s" repos-name)
     (break false))
   #
   (def results @{})
   (def target-urls (choose-n-urls all-urls n))
   (each url target-urls
-    (def exit-code (git-shallow-clone c/repos-path url))
+    (def exit-code (git-shallow-clone repos-name url))
     (def urls-for-code
       (array/push (get results exit-code @[])
                   url))
