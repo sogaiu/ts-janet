@@ -533,6 +533,11 @@
   https://notabug.org/debris/lllm-janet
   ``)
 
+(def all-urls
+  (keep |(when (pos? (length $))
+           (string/trimr $))
+        (string/split "\n" repo-lines)))
+
 ########################################################################
 
 # XXX: quick and dirty but may be fine for our purposes
@@ -589,7 +594,9 @@
       # need exit code so not using `run` from util.janet
       (os/execute ["git" "clone" "--depth=1"
                    url dest-dir]
-                  :p))))
+                  :pe
+                  # skip git's prompts
+                  (merge (os/environ) {"GIT_TERMINAL_PROMPT" "0"})))))
 
 (comment
 
@@ -668,32 +675,24 @@
       10))
   #
   (os/mkdir c/repos-path)
-  (when (not (= :directory
-                (os/stat c/repos-path :mode)))
-    (eprintf "repositories root needs to be a directory: %s"
-             c/repos-path)
+  (when (not (= :directory (os/stat c/repos-path :mode)))
+    (eprintf "repos root needs to be a directory: %s" c/repos-path)
     (break false))
   #
-  (def urls
-    (keep |(when (pos? (length $))
-             (string/trimr $))
-          (string/split "\n" repo-lines)))
-  #
   (def results @{})
-  (os/setenv "GIT_TERMINAL_PROMPT" "0") # skip git's prompts
-  (each url (choose-n-urls urls n)
-    (def exit-code
-      (git-shallow-clone c/repos-path url))
-    (def results-for-code
+  (def target-urls (choose-n-urls all-urls n))
+  (each url target-urls
+    (def exit-code (git-shallow-clone c/repos-path url))
+    (def urls-for-code
       (array/push (get results exit-code @[])
                   url))
-    (put results
-         exit-code results-for-code))
+    (put results exit-code urls-for-code))
   #
   (when (not (empty? results))
     (printf "%M" results)
+    (printf "Tried to fetch repos: %d" (length target-urls))
     (printf "Successfully fetched repos: %d" (length (get results 0)))
-    (eachk ret results
+    (each ret (sort (keys results))
       (when (not (zero? ret))
         (eprintf "Error code %d: %d" ret (length (get results ret)))))))
 
