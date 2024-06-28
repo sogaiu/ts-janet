@@ -2,6 +2,7 @@
 
 ########################################################################
 
+# keep the following form on one-line so fetch-samples can extract it
 (def repos-name "repos")
 
 (def repos-path

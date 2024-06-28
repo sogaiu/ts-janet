@@ -668,14 +668,26 @@
 
 (defn find-repos-name
   []
-  (when (not (os/stat "_conf.janet"))
+  (def conf-file "_conf.janet")
+  (when (not (os/stat conf-file))
     (break "repos"))
   #
-  (def [success? env-tbl] (protect (dofile "_conf.janet")))
-  (when (not success?)
-    (eprintf "failed to evaluate _conf.janet")
-    (break))
-  (get-in env-tbl ['repos-name :value]))
+  # hacky approach here, but this allows avoiding the use of dofile,
+  # which one might argue is not safe, elegant though that may be...
+  (def content (slurp conf-file))
+  (def lines (string/split "\n" content))
+  (var value nil)
+  (each line lines
+    (when (string/has-prefix? "(def repos-name" line)
+      (set value
+           (first (peg/match ~(sequence `(def repos-name "`
+                                        (capture (to `"`)))
+                             line)))
+      (break)))
+  (assert value
+          (string/format "failed to determine repos-name from: %s"
+                         conf-file))
+  value)
 
 ########################################################################
 
