@@ -678,11 +678,10 @@
   (def lines (string/split "\n" content))
   (var value nil)
   (each line lines
-    (when (string/has-prefix? "(def repos-name" line)
-      (set value
-           (first (peg/match ~(sequence `(def repos-name "`
-                                        (capture (to `"`)))
-                             line)))
+    (when-let [[match] (peg/match ~(sequence `(def repos-name "`
+                                             (capture (to `"`)))
+                                  line)]
+      (set value match)
       (break)))
   (assert value
           (string/format "failed to determine repos-name from: %s"
